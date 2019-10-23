@@ -156,7 +156,7 @@ def valorInfra():
     except serial.SerialException:
         pass
 
-
+'''
 def cam():
     
  cap = cv.VideoCapture(0)
@@ -598,12 +598,82 @@ def cam():
 
  cap.release()
  cv.destroyAllWindows()
+'''
+#direção
+motor1.on()
+motor2.on()
+motor3.on()
+motor4.on()
+#ligado
+motor1i.on()
+motor2i.on()
+motor3i.on()
+motor4i.on()
+#velocidade
+vel1.on
+vel2.on
+vel3.on
+vel4.on
+time.sleep(1.5)
+cap = cv.VideoCapture(0)
+ while (cap.isOpened()):
+    ret, img = cap.read()
+    
+    if ret == True:
+        #gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        gray = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+        gray_filter=cv.inRange(gray, (0, 0, 150), (180, 242, 255))
+        #ret,thresh = cv2.threshold(dst,100,255,0)
+        ret,thresh = cv.threshold(gray_filter,100,255,0)
+        #img_filter=cv.morphologyEx(thresh, cv.MORPH_OPEN,
+        #cv.imshow('Morph', img_filter)
+        kernel1 = np.ones((3,3),np.uint8)
+        img_filter = cv.dilate(thresh, kernel1, iterations=5)
+        kernel = np.ones((3,3),np.uint8)
+        img_filter1 = cv.erode(img_filter,kernel,iterations = 20)
+        #cv.imshow('Erode', img_filter)
+        contours, hierarchy = cv.findContours(img_filter1,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+        #ret,thresh = cv.threshold(gray,100,255,0)
 
-
-
-cam()
-
-#while (1):
+        #contours, hierarchy = cv.findContours(thresh,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+        for c in contours:
+            M = cv.moments(c)
+            if M["m00"] != 0:
+             cX = int(M["m10"] / M["m00"])
+             cY = int(M["m01"] / M["m00"])
+             cY3=cY2
+             cY2=cY1
+             cY1=cY0
+             cY0=cY
+             if (abs(cY0-cY2)<=10) & (abs(cY1-cY3)<=10) & (abs(cY0-cY1)>50) & (abs(cY2-cY3)>50):
+                 cam()
+             motor1.on()
+             motor2.off()
+             motor3.off()
+             motor4.on()
+             motor1i.on()
+             motor2i.on()
+             motor3i.on()
+             motor4i.on()
+             vel1.off
+             vel2.off
+             vel3.off
+             vel4.off
+             time.sleep(0.5)
+             motor1.on()
+             motor2.on()
+             motor3.off()
+             motor4.off()
+             motor1i.on()
+             motor2i.on()
+             motor3i.on()
+             motor4i.on()
+             vel1.off
+             vel2.off
+             vel3.off
+             vel4.off
+             time.sleep(1.5)
+    
 '''
     ligaCor()
     valorCor = lerCor()

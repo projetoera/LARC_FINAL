@@ -68,15 +68,15 @@ void color(){
 //  Serial.println();
 
   //Verifica se a cor vermelha foi detectada
-  if (mediaR < mediaB && mediaR < mediaG && mediaR < 70){
+  if (mediaR < mediaB && mediaR < mediaG && mediaR < 90){
     Serial.print("R");     
   }
   //Verifica se a cor verde foi detectada    
-  else if (mediaG < mediaR && mediaG < mediaB && mediaG < 130){
+  else if (mediaG < mediaR && mediaG < mediaB && mediaG < 90){
     Serial.print("G");
   }
   //Verifica se a cor azul foi detectada    
-  else if (mediaB < mediaR && mediaB < mediaG  && mediaB < 130){
+  else if (mediaB < mediaR && mediaB < mediaG  && mediaB < 90){
     Serial.print("B");     
   }
   //Verifica se uma outra cor foi detectada

@@ -2,14 +2,14 @@
 #include <VL53L0X.h>
 
 // Filtro de média do sensor infravermelho
-#define qtdMedia 20
+#define qtdMedia 25
 
 // Altura dos andares para o elevador
 #define A 120
 #define B 80
 #define C 40
+#define T 12
 #define D  0    // tem que calibrar pra zerar ele
-
 // ==================================================================================================
 // --- Definindo as funções ---
   // INFRAVERMELHO
@@ -28,26 +28,15 @@ VL53L0X sensor;
 VL53L0X sensor2;
 VL53L0X sensor3;
 int inf_e = 8;
-int inf_m = 12;
-int inf_d = 13;
-float mediaLeft, mediaMiddle, mediaRight;
+float mediaLeft;
 
 void infravermelho(){
-  mediaLeft = 0; 
-  mediaMiddle = 0;
-  mediaRight = 0;
-  for(int j=0; j<qtdMedia; j++){
-      mediaLeft += sensor.readRangeSingleMillimeters(); 
-      mediaMiddle += sensor2.readRangeSingleMillimeters();
-      mediaRight += sensor3.readRangeSingleMillimeters();
+  for (int j = 0; j<qtdMedia; j++){
+    if (sensor.timeoutOccurred()) j--;
+    else mediaLeft += sensor.readRangeContinuousMillimeters(); 
   }
   mediaLeft = mediaLeft/qtdMedia;
-  mediaMiddle = mediaMiddle/qtdMedia;
-  mediaRight = mediaRight/qtdMedia;
-  
   Serial.println(mediaLeft);
-  Serial.println(mediaMiddle);
-  Serial.println(mediaRight);
 }// infravermelho
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -63,7 +52,7 @@ void readSerial(){
       case 'B': distElevator = lastPosition - B; distMicroPasso(distElevator, B); break;
       case 'C': distElevator = lastPosition - C; distMicroPasso(distElevator, C); break;
       case 'D': distElevator = lastPosition - D; distMicroPasso(distElevator, D); break;
-      case 'E': infravermelho(); break;
+      case 'E': infravermelho(); mediaLeft = 0; break;
     }
   }
 }//void readSerial
@@ -76,7 +65,7 @@ void desliga(){
   digitalWrite(6,LOW);
   digitalWrite(9,LOW);
   digitalWrite(10,LOW);
-}// desliga motor
+}// desliga motor 
 
 
 bool Up = HIGH, clockWise = HIGH, clockWiseLast = HIGH, trocou = false, andar = LOW;
@@ -161,6 +150,7 @@ void distMicroPasso(float distElevator, float andar){
 ////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  Serial.begin(9600);
   //////////////////////////////////
   // MOTOR
   pinMode(5, OUTPUT);
@@ -172,29 +162,19 @@ void setup() {
   //////////////////////////////////
   // INFRAVERMELHO
   pinMode(inf_e, OUTPUT);
-  pinMode(inf_m, OUTPUT);
-  pinMode(inf_d, OUTPUT);
   digitalWrite(inf_e, LOW);
-  digitalWrite(inf_m, LOW);
-  digitalWrite(inf_d, LOW);
-  delay(100);
-  Wire.begin();
-  //SENSOR 1
-  pinMode(inf_e, INPUT);
-  sensor.init(true);
-  sensor.setAddress((uint8_t)22);
-  //SENSOR 2
-  pinMode(inf_m, INPUT);
-  sensor2.init(true);
-  sensor2.setAddress((uint8_t)25);
-  //SENSOR 3
-  pinMode(inf_d, INPUT);
-  sensor3.init(true);
-  sensor3.setAddress((uint8_t)28);
   
-  sensor.setTimeout(20);
-  sensor2.setTimeout(20);
-  sensor3.setTimeout(20);
+  delay(500);
+  Wire.begin();
+  
+  Serial.begin (9600);
+  
+  digitalWrite(inf_e, HIGH);
+  delay(150);
+  sensor.init(true);
+  delay(100);
+  sensor.setAddress((uint8_t)01);
+  sensor.startContinuous();
   //////////////////////////////////
 }
 

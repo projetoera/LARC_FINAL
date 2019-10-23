@@ -101,7 +101,8 @@ def cam():
              cX2=cX1
              cX1=cX0
              cX0=cX
-             angulo=atan((cY-Cyimg)/(cX-Cximg))*180/3.14 
+             angulo1=atan((cY-Cyimg)/(cX-Cximg))*180/3.14
+             angulo2=atan((cX-Cximg)/(cY-Cyimg))*180/3.14
              cY3=cY2
              cY2=cY1
              cY1=cY0
@@ -111,6 +112,32 @@ def cam():
              j=abs(int(Cyimg-cY))
              if (j-k)<0:
                  if (abs(cX0-cX2)<=10) & (abs(cX1-cX3)<=10) & (abs(cX0-cX1)>50) & (abs(cX2-cX3)>50):
+                  if p==1:
+                      while(g!=2):
+                             motor1.off()
+                             motor2.off()
+                             motor3.on()
+                             motor4.on()
+                             motor1i.on()
+                             motor2i.on()
+                             motor3i.on()
+                             motor4i.on()
+                             g=g+1
+                      p=0
+                      g=0
+                  elif p==2:
+                      while(g!=2):
+                             motor1.on()
+                             motor2.on()
+                             motor3.off()
+                             motor4.off()
+                             motor1i.on()
+                             motor2i.on()
+                             motor3i.on()
+                             motor4i.on()
+                             g=g+1
+                      p=0
+                      g=0
                   if (a!=0) & ((a%2)==0):
                       i=0
                       a=0
@@ -199,7 +226,7 @@ def cam():
                              motor4i.off()
                              time.sleep(0.1)
                          if (A==0):
-                             print('Movimento 2 translacional, distancia de',g)
+                             print('Movimento 2 translacional, distancia de',-erro)
                              if (erro<0):
                                  motor1.on()
                                  motor2.off()
@@ -223,7 +250,7 @@ def cam():
                              i=i-1
                              A=0
                             
-                     elif (abs(angulo)>=2):
+                     elif (abs(angulo1)>=2):
                          oa=3
                          if (o!=oa):
                              o=oa
@@ -232,9 +259,10 @@ def cam():
                              motor3i.off()
                              motor4i.off()
                              time.sleep(0.1)
-                         print('Movimento 2 rotacional, angulo de',angulo)
+                         print('Movimento 2 rotacional, angulo de',angulo1)
                          
-                         if (angulo<0):
+                         if (angulo1<0):
+                             p=1
                              motor1.off()
                              motor2.off()
                              motor3.on()
@@ -244,6 +272,7 @@ def cam():
                              motor3i.on()
                              motor4i.on()
                          else:
+                             p=2
                              motor1.on()
                              motor2.on()
                              motor3.off()
@@ -294,8 +323,34 @@ def cam():
                       print('B:',b)
 
                
-             elif  (j-k)>0:
+             elif  (j-k)>0:                     
                  if (abs(cY0-cY2)<=10) & (abs(cY1-cY3)<=10) & (abs(cY0-cY1)>50) & (abs(cY2-cY3)>50):
+                  if p==3:
+                      while(g!=2):
+                             motor1.on()
+                             motor2.on()
+                             motor3.off()
+                             motor4.off()
+                             motor1i.on()
+                             motor2i.on()
+                             motor3i.on()
+                             motor4i.on()
+                             g=g+1
+                      p=0
+                      g=0
+                  elif p==4:
+                      while(g!=2):
+                             motor1.off()
+                             motor2.off()
+                             motor3.on()
+                             motor4.on()
+                             motor1i.on()
+                             motor2i.on()
+                             motor3i.on()
+                             motor4i.on()
+                             g=g+1
+                      p=0
+                      g=0
                   if (a!=0) & ((a%2)==0):
                       i=0
                       a=0
@@ -317,6 +372,14 @@ def cam():
                   qy=dy
                   print('I:',i)
                   if (abs(erro)<=25) & (abs(dx)<=15):
+                      oa=1
+                     if (o!=oa):
+                         o=oa
+                         motor1i.off()
+                         motor2i.off()
+                         motor3i.off()
+                         motor4i.off()
+                         time.sleep(0.1)
                       motor1.on()
                       motor2.off()
                       motor3.off()
@@ -350,6 +413,14 @@ def cam():
                      #vel3.off
                      #vel4.off
                      if (abs(dx)<=15):
+                         oa=2
+                         if (o!=oa):
+                             o=oa
+                             motor1i.off()
+                             motor2i.off()
+                             motor3i.off()
+                             motor4i.off()
+                             time.sleep(0.1)
                          if (A==0):
                              print('Movimento translacional, distancia de', erro)
                              if (erro>0):
@@ -376,9 +447,17 @@ def cam():
                          elif (A==1):
                              i=i-1
                              A=0
-                     else:
-                         angulo=atan((cX-Cximg)/(cY-Cyimg))*180/3.14
-                         if (angulo<0):
+                     elif (abs(angulo2)>=2):
+                         oa=3
+                         if (o!=oa):
+                             o=oa
+                             motor1i.off()
+                             motor2i.off()
+                             motor3i.off()
+                             motor4i.off()
+                             time.sleep(0.1)
+                         if (angulo2<0):
+                             p=3
                              motor1.on()
                              motor2.on()
                              motor3.off()
@@ -388,6 +467,7 @@ def cam():
                              motor3i.on()
                              motor4i.on()
                          else:
+                             p=4
                              motor1.off()
                              motor2.off()
                              motor3.on()

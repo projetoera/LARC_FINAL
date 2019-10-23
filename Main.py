@@ -1,4 +1,5 @@
 from __future__ import print_function
+import serial.tools.list_ports
 import numpy as np
 import cv2 as cv
 from math import atan
@@ -6,11 +7,155 @@ from gpiozero import LED
 import time
 import serial
 import argparse
+#import RPi.GPIO as gpio
+
+#Inicializar porta serial do arduino
+__arduinoVid__ = '2341'
+__arduino1Pid__ = '8037'
+__arduino2Pid__ = '0027'
+
+#Acha porta arduino micro
+def find1Arduino():
+    for port in serial.tools.list_ports.comports():
+        if  port.vid != None and port.pid != None:
+            if ('{:04X}'.format(port.vid) == __arduinoVid__)and('{:04X}'.format(port.pid) == __arduino1Pid__):
+                result = port.device
+    return result
+
+#Acha porta arduino uno
+def find2Arduino():
+    for port in serial.tools.list_ports.comports():
+        if  port.vid != None and port.pid != None:
+            if ('{:04X}'.format(port.vid) == __arduinoVid__)and('{:04X}'.format(port.pid) == __arduino2Pid__):
+                result = port.device
+    return result
+
+#Cria objeto arduino
+#Arduino1 = Micro ; Arduino2 = Uno
+arduino1 = serial.Serial(find1Arduino(), 9600, timeout = None)
+arduino2 = serial.Serial(find2Arduino(), 9600, timeout = None)
 
 
+'''
+A,B,C,D = posicao elevador;
+F = Calibra Elevador
+L = Ligar Sensor de Cor;
+I = Liga eltroima
+S = Desliga eletroima;
+E = Liga Infravermelho;
+'''
 
-#arduino = serial.Serial('/dev/ttyACM0', 9600)
-#open_can
+
+'''
+K = quantidade de conteineres q foi pega na pilha
+V = quantidade containeres verde depositados em uma pilha
+A = quantidade containeres azul depositados em uma pilha
+'''
+
+'''
+K = 0
+V = 0
+A = 0
+'''
+#def sobeElevadorCarregado():
+
+def posicaoElevadorCarregadoVerde():
+    if(V == 0):
+        arduino.write(b'D')
+        V = V+1
+    elif(V == 1):
+        arduino.write(b'C')
+        V = V+1
+    elif(V == 2):
+        arduino.write(b'B')
+        V = V+1
+    elif(V == 3):
+        arduino.write(b'A')
+        V = V+1
+   # elif(V == 4):
+        #Zerar a pilha e começar outra
+
+def posicaoElevadorCarregadoAzul():
+    if(A == 0):
+        arduino.write(b'D')
+        A = A+1
+    elif(A == 1):
+        arduino.write(b'C')
+        A = A+1
+    elif(A == 2):
+        arduino.write(b'B')
+        A = A+1
+    elif(A == 3):
+        arduino.write(b'A')
+        A = A+1
+ #   elif(A == 4):
+        #Zerar a pilha e começar outra
+
+
+def sobeElevadorDescarregado():
+    #O arduino deve mandar subir a posição mais a segurança
+    if (K == 0):
+        arduino.write(b'A')
+    if (K == 1):
+        arduino.write(b'B')
+    if (K == 2):
+       arduino.write(b'C')
+    if (K == 3):
+        arduino.write(b'D')
+#    if (K == 4):
+        #Zerar a pilha e começar outra
+
+
+def desceElevadorDescarregado():
+    if (K == 0):
+        arduino.write(b'A')
+        K = K+1
+    if (K == 1):
+        arduino.write(b'B')
+        K = K+1
+    if (K == 2):
+        arduino.write(b'C')
+        K = K+1 
+    if (K == 3):
+        arduino.write(b'D')
+        K = K+1
+    #if (K == 4):
+        #Zerar a pilha e começar outra
+    
+#Calibração do elevador
+#def calibracaoElevador:
+#    arduino.write('')
+    
+def ligaCor():
+    arduino.write(b'L')
+    print('LigouCor')
+
+def lerCor():
+    try:
+        if arduino.inWaiting()>0:
+            valor = arduino.read()
+            print(valor)
+            return valor.decode("utf-8")
+    except serial.SerialException:
+        pass
+    
+def ligaIma():
+    arduino.write(b'I')
+    
+def desligaIma():
+    arduino.write(b'S')
+
+def ligaInfra():
+    arduino.write(b'E')
+    
+def valorInfra():
+    try:
+        if arduino.inWaiting()>0:
+            valorInfra = arduino.readline()
+            return float(valorInfra.decode("utf-8"))
+    except serial.SerialException:
+        pass
+
 
 def cam():
     
@@ -54,8 +199,6 @@ def cam():
  Cyimg=240
  q=0
  k=0
- p=0
- g=0
  metadedafita=20
  motor1 = LED(19)
  motor2 = LED(6)
@@ -78,7 +221,7 @@ def cam():
     if ret == True:
         #gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         gray = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-        gray_filter=cv.inRange(gray, (0, 0, 147), (180, 255, 255))
+        gray_filter=cv.inRange(gray, (0, 0, 150), (180, 242, 255))
         #ret,thresh = cv2.threshold(dst,100,255,0)
         ret,thresh = cv.threshold(gray_filter,100,255,0)
         #img_filter=cv.morphologyEx(thresh, cv.MORPH_OPEN,
@@ -101,7 +244,6 @@ def cam():
              cX2=cX1
              cX1=cX0
              cX0=cX
-             angulo=atan((cY-Cyimg)/(cX-Cximg))*180/3.14 
              cY3=cY2
              cY2=cY1
              cY1=cY0
@@ -199,7 +341,7 @@ def cam():
                              motor4i.off()
                              time.sleep(0.1)
                          if (A==0):
-                             print('Movimento 2 translacional, distancia de',g)
+                             print('Movimento 2 translacional, distancia de',-erro)
                              if (erro<0):
                                  motor1.on()
                                  motor2.off()
@@ -218,12 +360,10 @@ def cam():
                                  motor2i.on()
                                  motor3i.on()
                                  motor4i.on()
-                        
                          elif (A==1):
                              i=i-1
-                             A=0
-                            
-                     elif (abs(angulo)>=2):
+                             A=0                 
+                     else:
                          oa=3
                          if (o!=oa):
                              o=oa
@@ -232,8 +372,8 @@ def cam():
                              motor3i.off()
                              motor4i.off()
                              time.sleep(0.1)
+                         angulo=atan((cY-Cyimg)/(cX-Cximg))*180/3.14
                          print('Movimento 2 rotacional, angulo de',angulo)
-                         
                          if (angulo<0):
                              motor1.off()
                              motor2.off()
@@ -458,5 +598,20 @@ def cam():
 
  cap.release()
  cv.destroyAllWindows()
- 
+
+
+
 cam()
+
+#while (1):
+'''
+    ligaCor()
+    valorCor = lerCor()
+    if(valorCor == 'G'):
+        ligaIma()
+        print('Verde')
+    else:
+        desligaIma()
+        print('Azul')
+    time.sleep(5)
+'''

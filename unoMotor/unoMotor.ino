@@ -1,7 +1,7 @@
-byte passo = 0, passo1=8, passo2=1;
-bool Up=HIGH, first=true, clockWise=HIGH;
-int microStep=256;
-int PWM = 0 + microStep, PWMToPin=0, PWMPin=0;
+byte passo = 0, passo1 = 8, passo2 = 1;
+bool Up = HIGH, first = true, clockWise = HIGH;
+int microStep = 64, tempo = 500;
+int PWM = 0 + microStep, PWMToPin = 0, PWMPin = 0;
 int i = 1, lastPin = 5;
 bool clockWiseLast = HIGH, trocou = false;
 
@@ -20,13 +20,13 @@ void setup() {
 
 bool andar = LOW;
 
-void loop() {
+void loop(){
   if(andar==HIGH){
-  microPasso();
+    microPasso();
   }
   else{
     desliga();
-    }
+  }
 }//void looop
 
 void desliga(){
@@ -37,13 +37,11 @@ void desliga(){
 }
 
 void function(){
-                if(digitalRead(2)==HIGH){
-                  andar=HIGH;
-                  
-                  clockWise=digitalRead(3);
-
-                          if(clockWiseLast!=clockWise){
-                            Up=!Up;
+  if(digitalRead(2)==HIGH){
+    andar=HIGH;
+    clockWise=digitalRead(3);
+    if(clockWiseLast!=clockWise){
+    Up =! Up;
                             clockWiseLast=clockWise;
                             //Serial.println("trocou");
                             trocou=true;
@@ -94,7 +92,7 @@ void microPasso(){
 //                Serial.print(PWMPin);
 //                Serial.print(" : ");
 //                Serial.println(i);
-                delayMicroseconds (300*microStep);
+                delayMicroseconds (tempo*microStep);
           
                 if(PWM>=256 && Up==HIGH){
                   lastPin=PWMPin;

@@ -1,0 +1,21 @@
+andar o robô de ré por 1.5s (sair da linha inicial [conferir esse tempo])
+iniciar a câmera e andar até a linha verde
+usa a função cam pra servir como seguidor de linha (andando de lado) até a curva de 90°
+retornar alguns centimetros andando pelo lado oposto
+rotaciona 90°em direção ao conteiner
+desliga o seguidor de linha
+desce de ré até que o sensor imfravermelho leia: nada -> algum valor -> nada
+volta na direção oposta até que o infravermelho leia algum valor não nulo (garantir que está no meio do conteiner)
+liga a função cam
+alinha o robô (opcional ?)
+calibra a altura do elevador
+sobe até o andar A+s
+avança até a distância do infravermelho seja X (distância necessária para que o robô pegue o conteiner)
+desce até A e liga o eletroima
+sobe até A+s
+recua até alguns cm após a linha preta
+rotaciona 90° no sentido oposto ao da linha 5
+sobe até encontrar a linha verde
+apenas alinha o robô (se é que isso seja possível)
+
+SE O CONTEINER FOR AZUL, SOBE MAIS ALGUNS CM, ROTACIONA NO SENTIDO DA LINHA 5 

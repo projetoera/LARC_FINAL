@@ -17,7 +17,7 @@ void desliga(){
   digitalWrite(pinMotorB2,LOW);
 }// desliga motor 
 
-bool Up = HIGH, clockWise = HIGH, clockWiseLast = HIGH, trocou = false, andar = LOW;
+bool Up = HIGH, clockWise = HIGH, clockWiseLast = HIGH, trocou = false, andar = HIGH;
 void confereSentido(){
   if(digitalRead(pinLigaMotor) == HIGH){
     andar = HIGH;           
